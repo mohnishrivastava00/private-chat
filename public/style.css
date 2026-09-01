@@ -630,26 +630,44 @@ html, body {
   margin: 12px 0 6px 0;
 }
 
-/* Typing Indicator */
-.typing-indicator {
-  display: flex;
+/* Dynamic In-Stream Typing Bubble */
+.typing-bubble-container {
+  align-self: flex-start;
+  margin: 6px 0 10px 0;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.typing-bubble {
+  display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 16px 6px 16px;
-  font-size: 12px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  padding: 8px 14px;
+  border-radius: var(--radius-pill);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.typing-avatar {
+  font-size: 14px;
+}
+
+.typing-name {
+  font-size: 12.5px;
+  font-weight: 500;
   color: var(--accent-pink);
-  background: transparent;
-  flex-shrink: 0;
 }
 
 .typing-dots {
   display: flex;
-  gap: 3px;
+  align-items: center;
+  gap: 4px;
+  margin-left: 2px;
 }
 
 .typing-dots span {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   background-color: var(--accent-pink);
   border-radius: 50%;
   animation: bounce 1.4s infinite ease-in-out both;
@@ -659,8 +677,20 @@ html, body {
 .typing-dots span:nth-child(2) { animation-delay: -0.16s; }
 
 @keyframes bounce {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
+  0%, 80%, 100% { transform: scale(0.3); opacity: 0.4; }
+  40% { transform: scale(1.1); opacity: 1; }
+}
+
+/* Header Presence Pill Typing Animation */
+.presence-pill.is-typing {
+  border-color: var(--accent-pink);
+  box-shadow: 0 0 10px var(--accent-pink-glow);
+  animation: typingPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes typingPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 /* =========================================

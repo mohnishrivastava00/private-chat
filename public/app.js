@@ -15,19 +15,17 @@
   // DOM Elements
   const authScreen = document.getElementById('auth-screen');
   const chatScreen = document.getElementById('chat-screen');
-  const loginForm = document.getElementById('login-form');
   const usernameInput = document.getElementById('username');
   const passwordInput = document.getElementById('password');
   const authError = document.getElementById('auth-error');
   const togglePasswordBtn = document.getElementById('toggle-password-btn');
-  const quickUserChips = document.querySelectorAll('.chip');
-
   const messagesContainer = document.getElementById('messages-container');
   const messagesList = document.getElementById('messages-list');
   const messageInput = document.getElementById('message-input');
   const sendBtn = document.getElementById('send-btn');
   const typingIndicator = document.getElementById('typing-indicator');
   const typingText = document.getElementById('typing-text');
+  const typingAvatar = document.getElementById('typing-avatar');
   const connectionStatusText = document.getElementById('connection-status-text');
 
   const presenceMomo = document.getElementById('presence-momo');
@@ -211,15 +209,6 @@
     }
   });
 
-  // Quick User Autofill
-  quickUserChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      const user = chip.getAttribute('data-user');
-      usernameInput.value = user;
-      passwordInput.focus();
-    });
-  });
-
   // Authentication Flow
   async function performLogin(username, password) {
     authError.classList.add('hidden');
@@ -365,12 +354,33 @@
       if (presenceDemo) presenceDemo.remove();
     });
 
-    socket.on('user_typing', ({ display_name, isTyping }) => {
+    let typingSafetyTimeout = null;
+
+    socket.on('user_typing', ({ username, display_name, isTyping }) => {
+      clearTimeout(typingSafetyTimeout);
+      const u = (username || '').toLowerCase();
+      const pill = u === 'hottie_momo' ? presenceMomo : (u === 'sexy_namrru' ? presenceNamrata : presenceDemo);
+
       if (isTyping) {
-        typingText.textContent = `${display_name} is typing...`;
+        let avatar = '💬';
+        if (u === 'sexy_namrru') avatar = '🌸';
+        else if (u === 'hottie_momo') avatar = '⚡';
+        else if (u === 'demo') avatar = '✨';
+
+        if (typingAvatar) typingAvatar.textContent = avatar;
+        if (typingText) typingText.textContent = `${display_name} is typing...`;
         typingIndicator.classList.remove('hidden');
+        if (pill) pill.classList.add('is-typing');
+        scrollToBottom();
+
+        // Safety timeout to auto-hide if stop event is missed
+        typingSafetyTimeout = setTimeout(() => {
+          typingIndicator.classList.add('hidden');
+          if (pill) pill.classList.remove('is-typing');
+        }, 3500);
       } else {
         typingIndicator.classList.add('hidden');
+        if (pill) pill.classList.remove('is-typing');
       }
     });
   }
@@ -494,17 +504,22 @@
 
   messageInput.addEventListener('input', () => {
     autoResizeTextarea();
-    // Emit typing indicator with throttle
+    const hasText = messageInput.value.trim().length > 0;
     const now = Date.now();
-    if (now - lastTypingEmit > 1500 && socket) {
-      socket.emit('typing', { isTyping: true });
-      lastTypingEmit = now;
-    }
 
-    clearTimeout(isTypingTimeout);
-    isTypingTimeout = setTimeout(() => {
-      if (socket) socket.emit('typing', { isTyping: false });
-    }, 2000);
+    if (hasText && socket) {
+      if (now - lastTypingEmit > 800) {
+        socket.emit('typing', { isTyping: true });
+        lastTypingEmit = now;
+      }
+      clearTimeout(isTypingTimeout);
+      isTypingTimeout = setTimeout(() => {
+        if (socket) socket.emit('typing', { isTyping: false });
+      }, 2200);
+    } else if (socket) {
+      clearTimeout(isTypingTimeout);
+      socket.emit('typing', { isTyping: false });
+    }
   });
 
   sendBtn.addEventListener('click', sendMessage);

@@ -15,7 +15,7 @@
         <div class="auth-header">
           <div class="auth-icon-badge">🔒</div>
           <h1>Private Space</h1>
-          <p class="auth-subtitle">Encrypted, zero-bloat conversation for Momo & Namrata</p>
+          <p class="auth-subtitle">Encrypted Private Vault</p>
           <div class="badge-pill">⚡ Ultra Low-Data Mode • Fast & Lag-Free</div>
         </div>
 
@@ -23,12 +23,7 @@
           <div class="form-group">
             <label for="username">Username</label>
             <div class="input-wrap">
-              <input type="text" id="username" placeholder="e.g. Hottie_Momo or sexy_Namrru" autocomplete="username" autocapitalize="none" spellcheck="false" required>
-            </div>
-            <div class="quick-users">
-              <button type="button" class="chip" data-user="Hottie_Momo">⚡ Hottie_Momo</button>
-              <button type="button" class="chip" data-user="sexy_Namrru">🌸 sexy_Namrru</button>
-              <button type="button" class="chip" data-user="demo">✨ Demo</button>
+              <input type="text" id="username" placeholder="Enter username" autocomplete="username" autocapitalize="none" spellcheck="false" required>
             </div>
           </div>
 
@@ -110,15 +105,18 @@
           <p>Messages are real-time, saved in your private database, and optimized for ultra-low internet bandwidth.</p>
         </div>
         <div id="messages-list"></div>
-      </main>
 
-      <!-- Typing Indicator -->
-      <div id="typing-indicator" class="typing-indicator hidden">
-        <div class="typing-dots">
-          <span></span><span></span><span></span>
+        <!-- Dynamic In-Chat Typing Bubble -->
+        <div id="typing-indicator" class="typing-bubble-container hidden">
+          <div class="typing-bubble">
+            <span class="typing-avatar" id="typing-avatar">🌸</span>
+            <span class="typing-name" id="typing-text">Namrata is typing</span>
+            <div class="typing-dots">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
         </div>
-        <span id="typing-text">Someone is typing...</span>
-      </div>
+      </main>
 
       <!-- Snapchat-Style Quick Emoji Bar -->
       <div class="quick-emoji-bar">
