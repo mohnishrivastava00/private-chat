@@ -387,30 +387,41 @@
     });
   }
 
-  // Update Presence Indicators
-  function updatePresence(onlineUsernames) {
-    const list = onlineUsernames.map(u => u.toLowerCase());
-    
-    // Momo
-    const momoOnline = list.includes('hottie_momo');
-    const momoInd = presenceMomo?.querySelector('.status-indicator');
-    if (momoInd) {
-      momoInd.className = 'status-indicator ' + (momoOnline ? 'online' : 'offline');
-    }
+  // Update Presence Indicators (Green = Online in Chat, Blue = Notifications Active)
+  function updateUserPill(pillElement, info) {
+    if (!pillElement) return;
+    const greenDot = pillElement.querySelector('.green-dot');
+    const blueDot = pillElement.querySelector('.blue-dot');
+    const grayDot = pillElement.querySelector('.gray-dot');
+    const tooltipDetail = pillElement.querySelector('.tooltip-status');
 
-    // Namrata
-    const namrataOnline = list.includes('sexy_namrru');
-    const namrataInd = presenceNamrata?.querySelector('.status-indicator');
-    if (namrataInd) {
-      namrataInd.className = 'status-indicator ' + (namrataOnline ? 'online' : 'offline');
-    }
+    const isOnline = !!info?.isOnline;
+    const isNotificationOn = !!info?.isNotificationOn;
 
-    // Demo
-    const demoOnline = list.includes('demo');
-    const demoInd = presenceDemo?.querySelector('.status-indicator');
-    if (demoInd) {
-      demoInd.className = 'status-indicator ' + (demoOnline ? 'online' : 'offline');
+    // Display dots
+    if (greenDot) greenDot.style.display = isOnline ? 'inline-block' : 'none';
+    if (blueDot) blueDot.style.display = isNotificationOn ? 'inline-block' : 'none';
+    if (grayDot) grayDot.style.display = (!isOnline && !isNotificationOn) ? 'inline-block' : 'none';
+
+    // Tooltip status text
+    if (tooltipDetail) {
+      if (isOnline && isNotificationOn) {
+        tooltipDetail.innerHTML = '<span style="color:#22c55e">🟢 Online in Chat</span><br><span style="color:#38bdf8">🔵 Notifications Active</span>';
+      } else if (isOnline) {
+        tooltipDetail.innerHTML = '<span style="color:#22c55e">🟢 Online in Chat</span><br><span style="color:#94a3b8">⚪ Notifications Off</span>';
+      } else if (isNotificationOn) {
+        tooltipDetail.innerHTML = '<span style="color:#94a3b8">⚪ Offline from Chat</span><br><span style="color:#38bdf8">🔵 Notifications Active</span>';
+      } else {
+        tooltipDetail.innerHTML = '<span style="color:#64748b">⚪ Offline</span>';
+      }
     }
+  }
+
+  function updatePresence(presenceMap) {
+    if (!presenceMap || typeof presenceMap !== 'object') return;
+    updateUserPill(presenceMomo, presenceMap['hottie_momo']);
+    updateUserPill(presenceNamrata, presenceMap['sexy_namrru']);
+    updateUserPill(presenceDemo, presenceMap['demo']);
   }
 
   // Append Message to Feed

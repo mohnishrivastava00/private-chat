@@ -124,12 +124,27 @@ app.post('/api/remove-demo', authenticateToken, (req, res) => {
 });
 
 // Socket.io Connection & Events
-// Track connected users: username -> Set of socket IDs
-const activeSockets = new Map();
+// Track connected sockets separately:
+// browserSockets: web browser sessions (actively online in chat)
+// notifierSockets: background desktop sentinel daemons (notifications active)
+const browserSockets = new Map();
+const notifierSockets = new Map();
 
 function broadcastPresence() {
-  const onlineUsernames = Array.from(activeSockets.keys());
-  io.emit('presence_update', { onlineUsernames });
+  const presenceMap = {};
+  const allUsers = db.getAllUsers();
+
+  for (const u of allUsers) {
+    const username = u.username.toLowerCase();
+    const isOnline = browserSockets.has(username) && browserSockets.get(username).size > 0;
+    const isNotificationOn = notifierSockets.has(username) && notifierSockets.get(username).size > 0;
+    presenceMap[username] = {
+      isOnline,
+      isNotificationOn,
+      display_name: u.display_name
+    };
+  }
+  io.emit('presence_update', presenceMap);
 }
 
 // Socket Auth Middleware
@@ -149,12 +164,15 @@ io.use((socket, next) => {
 });
 
 io.on('connection', (socket) => {
-  const username = socket.user.username;
+  const username = socket.user.username.toLowerCase();
+  const isNotifier = !!socket.handshake.auth?.is_notifier;
+  socket.isNotifier = isNotifier;
 
-  if (!activeSockets.has(username)) {
-    activeSockets.set(username, new Set());
+  const targetMap = isNotifier ? notifierSockets : browserSockets;
+  if (!targetMap.has(username)) {
+    targetMap.set(username, new Set());
   }
-  activeSockets.get(username).add(socket.id);
+  targetMap.get(username).add(socket.id);
 
   broadcastPresence();
 
@@ -214,11 +232,12 @@ io.on('connection', (socket) => {
 
   // Disconnect handler
   socket.on('disconnect', () => {
-    if (activeSockets.has(username)) {
-      const userSockets = activeSockets.get(username);
+    const targetMap = socket.isNotifier ? notifierSockets : browserSockets;
+    if (targetMap.has(username)) {
+      const userSockets = targetMap.get(username);
       userSockets.delete(socket.id);
       if (userSockets.size === 0) {
-        activeSockets.delete(username);
+        targetMap.delete(username);
       }
     }
     broadcastPresence();

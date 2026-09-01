@@ -62,23 +62,49 @@
           </div>
         </div>
 
-        <!-- Active Users Presence Pills -->
+        <!-- Active Users Presence Pills with Dual Indicators (Green = Online, Blue = Notifications ON) -->
         <div class="header-center">
           <div class="presence-bar">
-            <div class="presence-pill" id="presence-momo" title="Hottie_Momo">
+            <div class="presence-pill" id="presence-momo" data-user="hottie_momo">
               <span class="avatar">⚡</span>
               <span class="user-name">Momo</span>
-              <span class="status-indicator offline"></span>
+              <div class="dots-wrapper">
+                <span class="status-dot green-dot" title="Online in Chat"></span>
+                <span class="status-dot blue-dot" title="Notifications ON"></span>
+                <span class="status-dot gray-dot" title="Offline"></span>
+              </div>
+              <div class="pill-tooltip">
+                <div class="tooltip-title">⚡ Momo</div>
+                <div class="tooltip-status">Offline</div>
+              </div>
             </div>
-            <div class="presence-pill" id="presence-namrata" title="sexy_Namrru">
+
+            <div class="presence-pill" id="presence-namrata" data-user="sexy_namrru">
               <span class="avatar">🌸</span>
               <span class="user-name">Namrata</span>
-              <span class="status-indicator offline"></span>
+              <div class="dots-wrapper">
+                <span class="status-dot green-dot" title="Online in Chat"></span>
+                <span class="status-dot blue-dot" title="Notifications ON"></span>
+                <span class="status-dot gray-dot" title="Offline"></span>
+              </div>
+              <div class="pill-tooltip">
+                <div class="tooltip-title">🌸 Namrata</div>
+                <div class="tooltip-status">Offline</div>
+              </div>
             </div>
-            <div class="presence-pill" id="presence-demo" title="Demo User">
+
+            <div class="presence-pill" id="presence-demo" data-user="demo">
               <span class="avatar">✨</span>
               <span class="user-name">Demo</span>
-              <span class="status-indicator offline"></span>
+              <div class="dots-wrapper">
+                <span class="status-dot green-dot" title="Online in Chat"></span>
+                <span class="status-dot blue-dot" title="Notifications ON"></span>
+                <span class="status-dot gray-dot" title="Offline"></span>
+              </div>
+              <div class="pill-tooltip">
+                <div class="tooltip-title">✨ Demo</div>
+                <div class="tooltip-status">Offline</div>
+              </div>
             </div>
           </div>
         </div>

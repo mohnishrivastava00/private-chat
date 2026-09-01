@@ -144,7 +144,7 @@ async function loginAndConnect() {
     }
 
     socket = io(SERVER_URL, {
-      auth: { token },
+      auth: { token, is_notifier: true },
       reconnection: true,
       reconnectionDelay: 2000,
       reconnectionAttempts: Infinity
