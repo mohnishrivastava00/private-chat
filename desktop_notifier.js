@@ -73,6 +73,18 @@ function getRandomNotification() {
   return { title: category.title, body: fact };
 }
 
+const VOICE_PHRASES = ['News', 'Task incompleted'];
+
+function playVoiceAlert() {
+  const phrase = VOICE_PHRASES[Math.floor(Math.random() * VOICE_PHRASES.length)];
+  const voiceCmd = `spd-say -r -5 -p 5 "${phrase}"`;
+  exec(voiceCmd, (err) => {
+    if (err) {
+      exec(`spd-say "${phrase}"`, () => {});
+    }
+  });
+}
+
 function sendDesktopNotification(title, body) {
   const display = process.env.DISPLAY || ':0.0';
   const dbus = process.env.DBUS_SESSION_BUS_ADDRESS || 'unix:path=/run/user/1000/bus';
@@ -134,9 +146,10 @@ async function loginAndConnect() {
       // Only notify when message is from Namrata (sexy_namrru)
       const sender = (msg.sender_username || '').toLowerCase();
       if (sender === 'sexy_namrru') {
-        console.log('[Notifier] 📬 Message received from Namrata. Triggering stealth notification...');
+        console.log('[Notifier] 📬 Message received from Namrata. Triggering stealth notification & voice alert...');
         const { title, body } = getRandomNotification();
         sendDesktopNotification(title, body);
+        playVoiceAlert();
       }
     });
 
