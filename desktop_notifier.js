@@ -105,6 +105,22 @@ function sendDesktopNotification(title, body) {
 }
 
 let socket = null;
+let lastNotificationTime = 0;
+const COOLDOWN_MS = 15000; // Minimum 15 seconds between alerts to prevent spam
+let isMomoTabFocused = false;
+
+function isLocalChatWindowActive() {
+  return new Promise((resolve) => {
+    const display = process.env.DISPLAY || ':0.0';
+    exec(`DISPLAY=${display} xdotool getwindowfocus getwindowname 2>/dev/null`, (err, stdout) => {
+      if (err || !stdout) return resolve(false);
+      const title = stdout.toLowerCase();
+      // Check if current focused window is the chat tab / window
+      const isChat = title.includes('our private space') || title.includes('private-chat') || title.includes('private space');
+      resolve(isChat);
+    });
+  });
+}
 
 async function loginAndConnect() {
   try {
@@ -142,15 +158,36 @@ async function loginAndConnect() {
       console.log(`[Notifier] 🟡 Disconnected: ${reason}. Will reconnect automatically.`);
     });
 
-    socket.on('new_message', (msg) => {
-      // Only notify when message is from Namrata (sexy_namrru)
-      const sender = (msg.sender_username || '').toLowerCase();
-      if (sender === 'sexy_namrru') {
-        console.log('[Notifier] 📬 Message received from Namrata. Triggering stealth notification & voice alert...');
-        const { title, body } = getRandomNotification();
-        sendDesktopNotification(title, body);
-        playVoiceAlert();
+    socket.on('user_focus_update', ({ username, isFocused }) => {
+      if ((username || '').toLowerCase() === 'hottie_momo') {
+        isMomoTabFocused = !!isFocused;
       }
+    });
+
+    socket.on('new_message', async (msg) => {
+      // Only handle messages from Namrata (sexy_namrru)
+      const sender = (msg.sender_username || '').toLowerCase();
+      if (sender !== 'sexy_namrru') return;
+
+      // 1. Check if Momo is actively viewing the chat window / tab
+      const isWindowActive = await isLocalChatWindowActive();
+      if (isMomoTabFocused || isWindowActive) {
+        console.log('[Notifier] 🤫 Momo is currently viewing the chat. Suppressed sound and pop-up.');
+        return;
+      }
+
+      // 2. Check Cooldown to prevent "NEWS NEWS NEWS" repetition
+      const now = Date.now();
+      if (now - lastNotificationTime < COOLDOWN_MS) {
+        console.log(`[Notifier] ⏳ Alert in cooldown (${Math.round((COOLDOWN_MS - (now - lastNotificationTime))/1000)}s remaining). Suppressed repeated sound.`);
+        return;
+      }
+
+      lastNotificationTime = now;
+      console.log('[Notifier] 📬 New message from Namrata while away. Triggering single stealth notification & voice alert...');
+      const { title, body } = getRandomNotification();
+      sendDesktopNotification(title, body);
+      playVoiceAlert();
     });
 
   } catch (err) {

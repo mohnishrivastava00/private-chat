@@ -183,6 +183,14 @@ io.on('connection', (socket) => {
     });
   });
 
+  // User Tab Focus / Active Visibility event
+  socket.on('user_focus_state', (data) => {
+    io.emit('user_focus_update', {
+      username: socket.user.username,
+      isFocused: !!data.isFocused
+    });
+  });
+
   // Toggle reaction event
   socket.on('toggle_reaction', (data) => {
     if (!data || !data.message_id || !data.emoji) return;

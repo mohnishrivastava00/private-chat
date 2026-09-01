@@ -320,6 +320,7 @@
 
     socket.on('connect', () => {
       connectionStatusText.textContent = 'Connected & Live';
+      reportFocusState();
     });
 
     socket.on('disconnect', () => {
@@ -595,6 +596,17 @@
       }
     }
   });
+
+  // Track Tab Focus / Visibility State
+  function reportFocusState() {
+    if (!socket || !currentUser) return;
+    const isFocused = document.visibilityState === 'visible' && document.hasFocus();
+    socket.emit('user_focus_state', { isFocused });
+  }
+
+  window.addEventListener('focus', reportFocusState);
+  window.addEventListener('blur', reportFocusState);
+  document.addEventListener('visibilitychange', reportFocusState);
 
   // Init
   initEmojiDrawer();
