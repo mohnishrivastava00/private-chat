@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0d1117">
+  <title>Our Private Space 💫</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+  <div id="app">
+    <!-- LOGIN SCREEN -->
+    <div id="auth-screen" class="screen">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-icon-badge">🔒</div>
+          <h1>Private Space</h1>
+          <p class="auth-subtitle">Encrypted, zero-bloat conversation for Momo & Namrata</p>
+          <div class="badge-pill">⚡ Ultra Low-Data Mode • Fast & Lag-Free</div>
+        </div>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <div class="input-wrap">
+              <input type="text" id="username" placeholder="e.g. Hottie_Momo or sexy_Namrru" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+            </div>
+            <div class="quick-users">
+              <button type="button" class="chip" data-user="Hottie_Momo">⚡ Hottie_Momo</button>
+              <button type="button" class="chip" data-user="sexy_Namrru">🌸 sexy_Namrru</button>
+              <button type="button" class="chip" data-user="demo">✨ Demo</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrap password-wrap">
+              <input type="password" id="password" placeholder="Enter your secret password" autocomplete="current-password" required>
+              <button type="button" id="toggle-password-btn" class="icon-btn-inline" title="Show/Hide Password">👁️</button>
+            </div>
+          </div>
+
+          <div id="auth-error" class="error-msg hidden"></div>
+
+          <button type="submit" id="login-btn" class="btn-primary">
+            <span>Enter Secret Space</span>
+            <span class="arrow-icon">➔</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- CHAT SCREEN -->
+    <div id="chat-screen" class="screen hidden">
+      <!-- Top Navigation Bar -->
+      <header class="chat-header">
+        <div class="header-left">
+          <div class="space-title">
+            <span class="space-logo">💖</span>
+            <div class="space-meta">
+              <h2>Momo & Namrata</h2>
+              <div class="network-indicator">
+                <span class="pulse-dot"></span>
+                <span id="connection-status-text">Connected & Live</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Users Presence Pills -->
+        <div class="header-center">
+          <div class="presence-bar">
+            <div class="presence-pill" id="presence-momo" title="Hottie_Momo">
+              <span class="avatar">⚡</span>
+              <span class="user-name">Momo</span>
+              <span class="status-indicator offline"></span>
+            </div>
+            <div class="presence-pill" id="presence-namrata" title="sexy_Namrru">
+              <span class="avatar">🌸</span>
+              <span class="user-name">Namrata</span>
+              <span class="status-indicator offline"></span>
+            </div>
+            <div class="presence-pill" id="presence-demo" title="Demo User">
+              <span class="avatar">✨</span>
+              <span class="user-name">Demo</span>
+              <span class="status-indicator offline"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button id="sound-toggle-btn" class="icon-btn" title="Toggle Sound Chime">🔔</button>
+          <button id="theme-toggle-btn" class="icon-btn" title="Change Theme">🎨</button>
+          <button id="menu-btn" class="icon-btn" title="Options">⚙️</button>
+          <button id="logout-btn" class="icon-btn logout" title="Log Out">🚪</button>
+        </div>
+      </header>
+
+      <!-- Settings Dropdown Menu -->
+      <div id="options-menu" class="dropdown-menu hidden">
+        <button id="remove-demo-btn" class="dropdown-item">🗑️ Remove Demo User</button>
+        <button id="clear-chat-btn" class="dropdown-item danger">🧹 Clear Chat History</button>
+      </div>
+
+      <!-- Messages Feed -->
+      <main id="messages-container" class="messages-container">
+        <div class="messages-welcome">
+          <div class="welcome-icon">🔒✨</div>
+          <h3>Private Vault Ready</h3>
+          <p>Messages are real-time, saved in your private database, and optimized for ultra-low internet bandwidth.</p>
+        </div>
+        <div id="messages-list"></div>
+      </main>
+
+      <!-- Typing Indicator -->
+      <div id="typing-indicator" class="typing-indicator hidden">
+        <div class="typing-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <span id="typing-text">Someone is typing...</span>
+      </div>
+
+      <!-- Snapchat-Style Quick Emoji Bar -->
+      <div class="quick-emoji-bar">
+        <div class="emoji-scroll-container" id="quick-emojis">
+          <button type="button" class="emoji-btn" data-emoji="❤️">❤️</button>
+          <button type="button" class="emoji-btn" data-emoji="🔥">🔥</button>
+          <button type="button" class="emoji-btn" data-emoji="😂">😂</button>
+          <button type="button" class="emoji-btn" data-emoji="😍">😍</button>
+          <button type="button" class="emoji-btn" data-emoji="😘">😘</button>
+          <button type="button" class="emoji-btn" data-emoji="🥺">🥺</button>
+          <button type="button" class="emoji-btn" data-emoji="🌸">🌸</button>
+          <button type="button" class="emoji-btn" data-emoji="⚡">⚡</button>
+          <button type="button" class="emoji-btn" data-emoji="💋">💋</button>
+          <button type="button" class="emoji-btn" data-emoji="✨">✨</button>
+          <button type="button" class="emoji-btn" data-emoji="🙈">🙈</button>
+          <button type="button" class="emoji-btn" data-emoji="💯">💯</button>
+          <button type="button" class="emoji-btn" data-emoji="🤫">🤫</button>
+          <button type="button" class="emoji-btn" data-emoji="🤍">🤍</button>
+          <button type="button" class="emoji-btn" data-emoji="🥰">🥰</button>
+          <button type="button" class="emoji-btn" data-emoji="🫂">🫂</button>
+          <button type="button" class="emoji-btn" data-emoji="🌹">🌹</button>
+          <button type="button" class="emoji-btn" data-emoji="💖">💖</button>
+          <button type="button" class="emoji-btn" data-emoji="👀">👀</button>
+          <button type="button" class="emoji-btn" data-emoji="😈">😈</button>
+        </div>
+        <button type="button" id="more-emojis-toggle" class="more-emojis-btn" title="More Emojis">+</button>
+      </div>
+
+      <!-- Extended Emoji Drawer -->
+      <div id="emoji-drawer" class="emoji-drawer hidden">
+        <div class="drawer-header">
+          <span>Choose Emoji</span>
+          <button type="button" id="close-drawer-btn" class="close-btn">✕</button>
+        </div>
+        <div class="drawer-grid" id="extended-emoji-grid">
+          <!-- Populated by app.js -->
+        </div>
+      </div>
+
+      <!-- Bottom Chat Input Bar -->
+      <footer class="chat-input-area">
+        <div class="formatting-bar">
+          <button type="button" class="fmt-btn" data-format="bold" title="Bold (**text**)"><b>B</b></button>
+          <button type="button" class="fmt-btn" data-format="italic" title="Italic (*text*)"><i>I</i></button>
+          <button type="button" class="fmt-btn" data-format="strike" title="Strikethrough (~text~)"><s>S</s></button>
+          <button type="button" class="fmt-btn" data-format="code" title="Code (`text`)"><code>&lt;&gt;</code></button>
+          <span class="keyboard-tip">Press <b>Enter</b> to send • <b>Shift+Enter</b> for new line</span>
+        </div>
+
+        <div class="input-row">
+          <textarea
+            id="message-input"
+            rows="1"
+            placeholder="Type a message..."
+            autofocus
+            autocomplete="off"
+            spellcheck="true"
+          ></textarea>
+
+          <button id="send-btn" class="send-btn" title="Send Message (Enter)">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+          </button>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Socket.io client served directly from local backend (zero external bandwidth) -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
