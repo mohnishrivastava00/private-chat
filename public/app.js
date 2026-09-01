@@ -15,6 +15,7 @@
   // DOM Elements
   const authScreen = document.getElementById('auth-screen');
   const chatScreen = document.getElementById('chat-screen');
+  const loginForm = document.getElementById('login-form');
   const usernameInput = document.getElementById('username');
   const passwordInput = document.getElementById('password');
   const authError = document.getElementById('auth-error');
