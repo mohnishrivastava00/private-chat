@@ -4,9 +4,10 @@
 (function() {
   'use strict';
 
-  // State
+  // State (Session-only security: requires login every new browser session)
+  localStorage.removeItem('vault_token'); // Purge legacy persistent tokens
   let currentUser = null;
-  let authToken = localStorage.getItem('vault_token');
+  let authToken = sessionStorage.getItem('vault_token');
   let socket = null;
   let soundEnabled = localStorage.getItem('sound_enabled') !== 'false';
   let isTypingTimeout = null;
@@ -229,7 +230,8 @@
 
       authToken = data.token;
       currentUser = data.user;
-      localStorage.setItem('vault_token', authToken);
+      sessionStorage.setItem('vault_token', authToken);
+      localStorage.removeItem('vault_token');
 
       showChatView();
       initSocket();
@@ -262,6 +264,7 @@
         initSocket();
         loadMessages();
       } else {
+        sessionStorage.removeItem('vault_token');
         localStorage.removeItem('vault_token');
       }
     } catch {
@@ -282,6 +285,7 @@
     }
     currentUser = null;
     authToken = null;
+    sessionStorage.removeItem('vault_token');
     localStorage.removeItem('vault_token');
     chatScreen.classList.add('hidden');
     authScreen.classList.remove('hidden');
