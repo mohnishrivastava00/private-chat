@@ -70,26 +70,39 @@ body.theme-rose {
 html, body {
   width: 100%;
   height: 100%;
+  min-height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
   font-family: var(--font-stack);
   background-color: var(--bg-main);
   color: var(--text-primary);
   line-height: 1.5;
   font-size: 15px;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
 }
 
 #app {
   width: 100%;
   height: 100%;
+  min-height: 100%;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  position: relative;
 }
 
 .screen {
   width: 100%;
   height: 100%;
+  min-height: 100%;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .hidden {
@@ -100,15 +113,19 @@ html, body {
    AUTH / LOGIN SCREEN
    ========================================= */
 #auth-screen {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: max(20px, var(--safe-top)) 16px max(20px, var(--safe-bottom)) 16px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
   background: radial-gradient(circle at top, #1e1e38 0%, var(--bg-main) 70%);
 }
 
 .auth-card {
   width: 100%;
   max-width: 420px;
+  margin: auto;
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
@@ -184,7 +201,7 @@ html, body {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   color: var(--text-primary);
-  font-size: 15px;
+  font-size: 16px; /* 16px prevents mobile iOS & Android auto-zoom */
   font-family: inherit;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -276,22 +293,27 @@ html, body {
 #chat-screen {
   display: flex;
   flex-direction: column;
+  height: 100%;
   height: 100dvh;
-  height: 100vh;
+  max-height: 100dvh;
+  position: relative;
+  overflow: hidden;
 }
 
 /* Header */
 .chat-header {
-  height: 60px;
-  padding: calc(8px + var(--safe-top)) 16px 8px 16px;
+  min-height: calc(52px + var(--safe-top));
+  height: auto;
+  padding: calc(6px + var(--safe-top)) 12px 6px 12px;
   background-color: var(--bg-card);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   z-index: 10;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .header-left {
@@ -937,7 +959,7 @@ textarea#message-input {
   padding: 10px 14px;
   color: var(--text-primary);
   font-family: inherit;
-  font-size: 14.5px;
+  font-size: 16px; /* Prevents auto-zoom on mobile iOS & Android */
   line-height: 1.4;
   outline: none;
   resize: none;
@@ -964,6 +986,7 @@ textarea#message-input:focus {
   flex-shrink: 0;
   box-shadow: 0 2px 10px var(--accent-pink-glow);
   transition: transform 0.12s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .send-btn:active {
@@ -971,19 +994,145 @@ textarea#message-input:focus {
 }
 
 /* =========================================
-   RESPONSIVE ADJUSTMENTS
+   RESPONSIVE ADJUSTMENTS (MOBILE FIRST)
    ========================================= */
-@media (max-width: 600px) {
+@media (max-width: 640px) {
+  /* Prevent automatic mobile zoom */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+
   .keyboard-tip {
     display: none;
   }
+
+  .chat-header {
+    padding-left: max(10px, var(--safe-left));
+    padding-right: max(10px, var(--safe-right));
+    gap: 6px;
+  }
+
+  .space-title {
+    gap: 6px;
+  }
+
+  .space-logo {
+    font-size: 20px;
+  }
+
+  .space-meta h2 {
+    font-size: 13.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 110px;
+  }
+
+  .network-indicator {
+    font-size: 10px;
+  }
+
+  #connection-status-text {
+    display: none; /* Show only live pulsing dot on mobile */
+  }
+
+  .presence-bar {
+    gap: 4px;
+  }
+
+  .presence-pill {
+    padding: 3px 6px;
+    gap: 4px;
+    font-size: 11px;
+  }
+
   .presence-pill .user-name {
-    display: none;
+    display: none; /* Avatar + Status Dot on mobile */
   }
+
+  .presence-pill .avatar {
+    font-size: 13px;
+  }
+
+  .header-right {
+    gap: 3px;
+  }
+
+  .icon-btn {
+    width: 33px;
+    height: 33px;
+    font-size: 15px;
+  }
+
   .msg-group {
-    max-width: 90%;
+    max-width: 88%;
   }
+
+  .msg-content {
+    font-size: 14.5px;
+    padding: 9px 13px;
+  }
+
+  .quick-emoji-bar {
+    padding: 6px 8px;
+  }
+
+  .quick-emoji-btn {
+    font-size: 19px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .chat-input-area {
+    padding: 6px 10px calc(8px + var(--safe-bottom)) 10px;
+  }
+
+  .formatting-bar {
+    gap: 4px;
+    padding: 0 2px;
+  }
+
+  .fmt-btn {
+    width: 26px;
+    height: 22px;
+    font-size: 10.5px;
+  }
+
   .auth-card {
-    padding: 24px 18px;
+    padding: 26px 20px;
+  }
+
+  .auth-header h1 {
+    font-size: 20px;
+  }
+
+  .badge-pill {
+    font-size: 10.5px;
+    padding: 3px 8px;
+  }
+}
+
+@media (max-width: 380px) {
+  .space-meta h2 {
+    max-width: 85px;
+    font-size: 12.5px;
+  }
+
+  .space-logo {
+    font-size: 18px;
+  }
+
+  .presence-bar {
+    gap: 2px;
+  }
+
+  .presence-pill {
+    padding: 2px 4px;
+  }
+
+  .icon-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 13.5px;
   }
 }

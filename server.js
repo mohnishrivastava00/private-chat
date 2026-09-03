@@ -56,6 +56,10 @@ function authenticateToken(req, res, next) {
 }
 
 // REST Routes
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime(), time: Date.now() });
+});
+
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
 

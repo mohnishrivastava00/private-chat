@@ -4,10 +4,9 @@
 (function() {
   'use strict';
 
-  // State (Session-only security: requires login every new browser session)
-  localStorage.removeItem('vault_token'); // Purge legacy persistent tokens
+  // State
   let currentUser = null;
-  let authToken = sessionStorage.getItem('vault_token');
+  let authToken = localStorage.getItem('vault_token');
   let socket = null;
   let soundEnabled = localStorage.getItem('sound_enabled') !== 'false';
   let isTypingTimeout = null;
@@ -230,8 +229,7 @@
 
       authToken = data.token;
       currentUser = data.user;
-      sessionStorage.setItem('vault_token', authToken);
-      localStorage.removeItem('vault_token');
+      localStorage.setItem('vault_token', authToken);
 
       showChatView();
       initSocket();
@@ -264,7 +262,6 @@
         initSocket();
         loadMessages();
       } else {
-        sessionStorage.removeItem('vault_token');
         localStorage.removeItem('vault_token');
       }
     } catch {
@@ -275,7 +272,10 @@
   function showChatView() {
     authScreen.classList.add('hidden');
     chatScreen.classList.remove('hidden');
-    messageInput.focus();
+    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.matchMedia('(pointer: coarse)').matches;
+    if (!isTouch) {
+      messageInput.focus();
+    }
   }
 
   function showAuthView() {
@@ -285,7 +285,6 @@
     }
     currentUser = null;
     authToken = null;
-    sessionStorage.removeItem('vault_token');
     localStorage.removeItem('vault_token');
     chatScreen.classList.add('hidden');
     authScreen.classList.remove('hidden');
@@ -610,6 +609,24 @@
         alert('Failed to clear messages');
       }
     }
+  });
+
+  // Visual Viewport handler for mobile software keyboards (iOS Safari & Android Chrome)
+  if (window.visualViewport) {
+    const handleViewportResize = () => {
+      if (chatScreen.classList.contains('hidden')) return;
+      const currentHeight = window.visualViewport.height;
+      chatScreen.style.height = `${currentHeight}px`;
+      chatScreen.style.maxHeight = `${currentHeight}px`;
+      setTimeout(scrollToBottom, 60);
+    };
+
+    window.visualViewport.addEventListener('resize', handleViewportResize);
+  }
+
+  // Smooth scroll when user focuses input on mobile
+  messageInput.addEventListener('focus', () => {
+    setTimeout(scrollToBottom, 250);
   });
 
   // Track Tab Focus / Visibility State

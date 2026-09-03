@@ -196,5 +196,17 @@ async function loginAndConnect() {
   }
 }
 
+// Keep-Alive Ping every 8 minutes so Render free tier never sleeps
+setInterval(async () => {
+  try {
+    const res = await fetch(`${SERVER_URL}/api/health`);
+    if (res.ok) {
+      // Server kept awake successfully
+    }
+  } catch (err) {
+    // Ignore transient network errors
+  }
+}, 8 * 60 * 1000);
+
 // Start
 loginAndConnect();
